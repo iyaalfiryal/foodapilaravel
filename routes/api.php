@@ -3,10 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\FoodController;
+use App\Http\Controllers\API\FoodController;
 use App\Http\Controllers\MidtransController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\API\TransactionController;
+use App\Http\Controllers\API\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,3 +37,5 @@ Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
 
 Route::get('food', [FoodController::class, 'all']);
+Route::post('food', [FoodController::class, 'store']);
+Route::post('food/{id}', [FoodController::class, 'update']);

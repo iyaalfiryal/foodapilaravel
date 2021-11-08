@@ -6,6 +6,7 @@ use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Food;
 use Illuminate\Http\Request;
+use App\Http\Requests\FoodRequest;
 
 class FoodController extends Controller
 {
@@ -43,42 +44,74 @@ class FoodController extends Controller
             }
         }
 
-        $food = Food::query();
-
+        $query = array();
         // Get Data Food By Name
         if ($name) {
-            $food->where('name', 'like', '%' . $name . '%');
+            array_push($query,['name', 'like', '%' . $name . '%']);
         }
 
         // Get Data Food By Types
         if ($types) {
-            $food->where('types', 'like', '%' . $types . '%');
+            array_push($query,['types', 'like', '%' . $types . '%']);
         }
 
         // Get Data Food By Price From
         if ($price_from) {
-            $food->where('price', '>=', $price_from);
+            array_push($query,['price', '>=', $price_from]);
         }
 
         // Get Data Food By Price To
         if ($price_to) {
-            $food->where('price', '<=', $price_to);
+            array_push($query,['price', '<=', $price_to]);
         }
 
         // Get Data Food By Price Rate From
         if ($rate_from) {
-            $food->where('rate', '>=', $rate_from);
+            array_push($query,['rate', '>=', $rate_from]);
         }
 
         // Get Data Food By Price Rate to
         if ($rate_to) {
-            $food->where('rate', '>=', $rate_to);
+            array_push($query,['rate', '>=', $rate_to]);
         }
-
+        $result = Food::where($query)->paginate($limit);
         // Response Data
         return ResponseFormatter::success(
-            $food->paginate($limit),
+            $result,
             'Success Get Data List Food'
+        );
+    }
+
+    // API Store Data Food
+    public function store(Request $request)
+    {
+        $data = $request->all();
+
+        if ($request->hasFile('picturePath')) {
+            $data['picturePath'] = $request->file('picturePath')->store('assets/food', 'public');
+        }
+
+        $result = Food::create($data);
+
+        return ResponseFormatter::success(
+            $result,
+            'Success Store Food Data'
+        );
+    }
+
+    public function update(FoodRequest $request, Food $food)
+    {
+        $data = $request->all();
+
+        if ($request->file('picturePath')) {
+            $data['picturePath'] = $request->file('picturePath')->store('assets/food', 'public');
+        }
+
+        $food->update($data);
+
+        return ResponseFormatter::success(
+            $food,
+            'Success Update Food Data'
         );
     }
 }
