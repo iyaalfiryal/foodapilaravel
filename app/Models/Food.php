@@ -17,7 +17,7 @@ class Food extends Model
         'picturePath'
     ];
 
-    // Create Accessors Convert to timestamp 
+    // Create Accessors Convert to timestamp
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->timestamp;
@@ -32,12 +32,16 @@ class Food extends Model
     public function toArray()
     {
         $toArray = parent::toArray();
-        $toArray['picturePath'] = $this->picturePath;
+        if(!empty($this->picturePath)) {
+            $toArray['picturePath'] = $this->picturePath;
+        }
         return $toArray;
     }
 
     public function getPicturePathAttribute()
     {
+        if(!empty($this->picturePath)) {
         return url('') . Storage::url($this->attributes['picturePath']);
+        }
     }
 }
